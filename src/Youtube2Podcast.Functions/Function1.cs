@@ -18,11 +18,7 @@ namespace Youtube2Podcast.Functions
     {
         [FunctionName("FetchNewVideos")]
         public static async Task Run(
-#if DEBUG
-            [TimerTrigger("0 0 0/1 1/1 * ? *")]TimerInfo myTimer, 
-#else
-            [TimerTrigger("00:00:03")]TimerInfo myTimer,
-#endif
+            [TimerTrigger("0 0 0/3 1/1 * ? *", RunOnStartup = true)]TimerInfo myTimer, 
             TraceWriter log)
         {
             try
