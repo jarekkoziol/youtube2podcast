@@ -1,0 +1,152 @@
+{
+    "$connections": {
+        "value": {
+            "gmail": {
+                "connectionId": "/subscriptions/ea9d25e7-a4c7-424f-9ad1-92b19a225aea/resourceGroups/Youtube2Podcast/providers/Microsoft.Web/connections/gmail",
+                "connectionName": "gmail",
+                "id": "/subscriptions/ea9d25e7-a4c7-424f-9ad1-92b19a225aea/providers/Microsoft.Web/locations/northeurope/managedApis/gmail"
+            }
+        }
+    },
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Condition": {
+                "actions": {
+                    "Send_email": {
+                        "inputs": {
+                            "body": {
+                                "Body": "Hi there!\n\nFollowing deployment has succed!\nauthor: @{triggerBody()?['author']}\nauthorEmail: @{triggerBody()?['authorEmail']}\ncomplete: @{triggerBody()?['complete']}\ndeployer: @{triggerBody()?['deployer']}\nendTime:@{triggerBody()?['endTime']}\nhostName: @{triggerBody()?['hostName']}\nid: @{triggerBody()?['id']}\nmessage: @{triggerBody()?['message']}\nreceivedtime: @{triggerBody()?['receivedTime']}\nstarttime: @{triggerBody()?['startTime']}\nstatus: @{triggerBody()?['status']}\nstatusText: @{triggerBody()?['statusText']}",
+                                "IsHtml": false,
+                                "Subject": "Azure function deployment succed! ",
+                                "To": "karekjoziol+azure@gmail.com"
+                            },
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['gmail']['connectionId']"
+                                }
+                            },
+                            "method": "post",
+                            "path": "/Mail"
+                        },
+                        "runAfter": {},
+                        "type": "ApiConnection"
+                    }
+                },
+                "else": {
+                    "actions": {
+                        "Send_email_2": {
+                            "inputs": {
+                                "body": {
+                                    "Body": "Hi\n\nFollowing deployment has failed!\nauthor: @{triggerBody()?['author']}\nauthorEmail: @{triggerBody()?['authorEmail']}\ncomplete: @{triggerBody()?['complete']}\ndeployer: @{triggerBody()?['deployer']}\nendTime:@{triggerBody()?['endTime']}\nhostName: @{triggerBody()?['hostName']}\nid: @{triggerBody()?['id']}\nmessage: @{triggerBody()?['message']}\nreceivedtime: @{triggerBody()?['receivedTime']}\nstarttime: @{triggerBody()?['startTime']}\nstatus: @{triggerBody()?['status']}\nstatusText: @{triggerBody()?['statusText']}",
+                                    "Importance": "High",
+                                    "IsHtml": false,
+                                    "Subject": "Azure function deployment failed! ",
+                                    "To": "karekjoziol+azure@gmail.com"
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['gmail']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/Mail"
+                            },
+                            "runAfter": {},
+                            "type": "ApiConnection"
+                        }
+                    }
+                },
+                "expression": {
+                    "or": [
+                        {
+                            "equals": [
+                                "@triggerBody()?['status']",
+                                "success"
+                            ]
+                        }
+                    ]
+                },
+                "runAfter": {},
+                "type": "If"
+            },
+            "Response": {
+                "inputs": {
+                    "schema": {},
+                    "statusCode": 200
+                },
+                "kind": "Http",
+                "runAfter": {
+                    "Condition": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Response"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "manual": {
+                "inputs": {
+                    "method": "POST",
+                    "schema": {
+                        "properties": {
+                            "author": {
+                                "type": "string"
+                            },
+                            "authorEmail": {
+                                "type": "string"
+                            },
+                            "complete": {
+                                "type": "boolean"
+                            },
+                            "deployer": {
+                                "type": "string"
+                            },
+                            "endTime": {
+                                "type": "string"
+                            },
+                            "hostName": {
+                                "type": "string"
+                            },
+                            "id": {
+                                "type": "string"
+                            },
+                            "lastSuccessEndTime": {
+                                "type": "string"
+                            },
+                            "message": {
+                                "type": "string"
+                            },
+                            "receivedTime": {
+                                "type": "string"
+                            },
+                            "siteName": {
+                                "type": "string"
+                            },
+                            "startTime": {
+                                "type": "string"
+                            },
+                            "status": {
+                                "type": "string"
+                            },
+                            "statusText": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "kind": "Http",
+                "type": "Request"
+            }
+        }
+    }
+}
