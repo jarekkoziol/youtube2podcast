@@ -121,7 +121,7 @@ namespace Youtube2Podcast.Functions
 
             if (tasks.Any())
             {
-                _log.Info("Sendings new movies to queue succed");
+                _log.Info("Sendings new movies to queue succed!");
             }
 
             return Task.CompletedTask;
